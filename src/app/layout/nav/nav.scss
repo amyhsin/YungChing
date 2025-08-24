@@ -1,0 +1,29 @@
+.navbar {
+  background-color: #1976d2;
+  padding: 10px;
+  color: white;
+
+  .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+
+    li {
+      a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+
+        &.active {
+          border-bottom: 2px solid white;
+        }
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}

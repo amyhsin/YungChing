@@ -1,0 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; // 讓 footer 自動貼到底部
+}
+
+.main-content {
+  flex: 1; // 讓內容區域撐滿剩餘高度
+  padding: 20px;
+}

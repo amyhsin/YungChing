@@ -1,1 +1,44 @@
-<p>attractions works!</p>
+<p-table
+  [value]="attractions"
+  [paginator]="true"
+  [rows]="rows"
+  [totalRecords]="totalRecords"
+  [loading]="loading"
+  [first]="first"
+  (onPage)="onPageChange($event)"
+  selectionMode="multiple"
+  [(selection)]="selectedAttractions"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 3rem"></th>
+      <th>Name</th>
+      <th>District</th>
+      <th>Address</th>
+      <th>Picture</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-attraction>
+    <tr [pSelectableRow]="attraction">
+      <td>
+        <p-tableCheckbox [value]="attraction"></p-tableCheckbox>
+      </td>
+      <td>{{ attraction.name }}</td>
+      <td>{{ attraction.distric }}</td>
+      <td>{{ attraction.address }}</td>
+      <td>
+        <ng-container *ngIf="attraction.images.length > 0">
+          <img
+            [src]="attraction.images[0].src"
+            width="80"
+          />
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<div style="margin-top: 1rem">
+  <!-- <button pButton label="Show Favorites" (click)="console.log(selectedAttractions)">
+  </button> -->
+</div>

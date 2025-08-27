@@ -4,17 +4,23 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { TableLazyLoadEvent, TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CheckboxModule } from 'primeng/checkbox';
+import { SelectModule } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
 import { LazyLoadEvent } from 'primeng/api';
 
 @Component({
   selector: 'app-attractions',
   standalone: true,
-  imports: [CommonModule, TableModule, ButtonModule, CheckboxModule],
+  imports: [CommonModule, TableModule, ButtonModule, CheckboxModule, SelectModule, FormsModule],
   templateUrl: './attractions.html',
   styleUrl: './attractions.scss',
 })
 export class Attractions implements OnInit {
   attractions: any[] = [];
+  filteredAttractions: any[] = [];
+  categories: any[] = [];
+  categoriesFromApi: any[] = [];
+  selectedCategory: any = null;
   pagedAttractions: any[] = [];
   totalRecords = 0;
   loading = false;
@@ -27,6 +33,7 @@ export class Attractions implements OnInit {
 
   ngOnInit(): void {
     this.fetchAttractions();
+    this.fetchCategories();
   }
 
   fetchAttractions() {
@@ -35,6 +42,7 @@ export class Attractions implements OnInit {
     this.http.get(url).subscribe({
       next: (res: any) => {
         this.attractions = res.data ?? [];
+        this.filteredAttractions = [...this.attractions];
         this.totalRecords = this.attractions.length;
         // this.updatePagedData();
         this.loading = false;
@@ -46,11 +54,46 @@ export class Attractions implements OnInit {
     });
   }
 
-   onPageChange(event: any) {
+  fetchCategories() {
+    const url =
+      'https://www.travel.taipei/open-api/zh-tw/Miscellaneous/Categories?type=Attractions';
+    this.http.get(url).subscribe({
+      next: (res: any) => {
+        this.categoriesFromApi = res.data.Category ?? [];
+        this.categories = [{ id: 0, name: '全部' }, ...this.categoriesFromApi];
+        this.selectedCategory = this.categories[0].id;
+        console.log('categories', this.categories);
+      },
+      error: (err) => {
+        console.error('Fetch Categories Error: ', err);
+      },
+    });
+  }
+
+  onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
     // this.updatePagedData();
   }
+
+  onCategoryChange() {
+    console.log('selected id: ', this.selectedCategory);
+    if (!this.selectedCategory || this.selectedCategory === 0) {
+      this.filteredAttractions = [...this.attractions];
+      return;
+    }
+
+    // const selectedId = this.selectedCategory.id;
+    this.filteredAttractions = this.attractions.filter((attr) =>
+      attr.category?.some((c: any) => c.id === this.selectedCategory)
+    );
+
+    console.log('filteredAttractions', this.filteredAttractions);
+  }
+
+  // addToFavorite(selectedFavorite: any) {
+  //   console.log("selected: ", selectedFavorite);
+  // }
 
   // updatePagedData() {
   //   console.log("first", this.first);

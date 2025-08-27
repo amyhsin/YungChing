@@ -1,5 +1,16 @@
+<p-select
+  [options]="categories"
+  [(ngModel)]="selectedCategory"
+  optionLabel="name"
+  optionValue="id"
+  placeholder="選擇分類"
+  (onChange)="onCategoryChange()"
+>
+</p-select>
+
+<!-- <p *ngIf="selectedCategory">你選擇的分類 ID: {{ selectedCategory }}</p> -->
 <p-table
-  [value]="attractions"
+  [value]="filteredAttractions"
   [paginator]="true"
   [rows]="rows"
   [totalRecords]="totalRecords"
@@ -28,17 +39,14 @@
       <td>{{ attraction.address }}</td>
       <td>
         <ng-container *ngIf="attraction.images.length > 0">
-          <img
-            [src]="attraction.images[0].src"
-            width="80"
-          />
+          <img [src]="attraction.images[0].src" width="80" />
         </ng-container>
       </td>
     </tr>
   </ng-template>
 </p-table>
 
-<div style="margin-top: 1rem">
-  <!-- <button pButton label="Show Favorites" (click)="console.log(selectedAttractions)">
-  </button> -->
-</div>
+<!-- <div style="margin-top: 1rem">
+  <button pButton label="加入最愛" (click)="addToFavorite(selectedAttractions)">
+  </button>
+</div> -->

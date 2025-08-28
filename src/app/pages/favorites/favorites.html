@@ -1,1 +1,55 @@
-<p>favorites works!</p>
+<p-select
+  [options]="categories"
+  [(ngModel)]="selectedCategory"
+  optionLabel="name"
+  optionValue="id"
+  placeholder="選擇分類"
+  (onChange)="onCategoryChange()"
+>
+</p-select>
+
+<p-table
+  [value]="filteredAttractions"
+  [paginator]="true"
+  [rows]="rows"
+  [totalRecords]="totalRecords"
+  [first]="first"
+  (onPage)="onPageChange($event)"
+  selectionMode="multiple"
+  [(selection)]="selectedAttractions"
+>
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="width: 3rem"></th>
+      <th>名稱</th>
+      <th>地區</th>
+      <th>地址</th>
+      <th>圖片</th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-attraction>
+    <tr [pSelectableRow]="attraction">
+      <td>
+        <p-tableCheckbox [value]="attraction"></p-tableCheckbox>
+      </td>
+      <td>{{ attraction.name }}</td>
+      <td>{{ attraction.distric }}</td>
+      <td>{{ attraction.address }}</td>
+      <td>
+        <ng-container *ngIf="attraction.images.length > 0">
+          <img [src]="attraction.images[0].src" width="80" />
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<div style="margin-top: 1rem">
+  <button
+    pButton
+    label="從我的最愛中移除"
+    severity="danger"
+    (click)="removeFromFavorite(selectedAttractions)"
+    [disabled]="selectedAttractions.length < 1"
+  ></button>
+</div>

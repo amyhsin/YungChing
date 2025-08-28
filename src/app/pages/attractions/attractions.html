@@ -23,10 +23,10 @@
   <ng-template pTemplate="header">
     <tr>
       <th style="width: 3rem"></th>
-      <th>Name</th>
-      <th>District</th>
-      <th>Address</th>
-      <th>Picture</th>
+      <th>名稱</th>
+      <th>地區</th>
+      <th>地址</th>
+      <th>圖片</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-attraction>
@@ -46,7 +46,11 @@
   </ng-template>
 </p-table>
 
-<!-- <div style="margin-top: 1rem">
-  <button pButton label="加入最愛" (click)="addToFavorite(selectedAttractions)">
-  </button>
-</div> -->
+<div style="margin-top: 1rem">
+  <button
+    pButton
+    label="更新我的最愛"
+    (click)="addToFavorite(selectedAttractions)"
+    [disabled]="selectedAttractions.length < 1"
+  ></button>
+</div>

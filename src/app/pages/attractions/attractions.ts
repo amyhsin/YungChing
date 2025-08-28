@@ -25,6 +25,7 @@ export class Attractions implements OnInit {
   totalRecords = 0;
   loading = false;
   selectedAttractions: any[] = [];
+  favoriteAttractions: any[] = [];
   favorites: any[] = [];
   rows = 10; // 每頁 10 筆
   first = 0; // 當前頁面 index
@@ -34,6 +35,17 @@ export class Attractions implements OnInit {
   ngOnInit(): void {
     this.fetchAttractions();
     this.fetchCategories();
+
+     // 1. 讀取 localStorage 的最愛
+    const stored = localStorage.getItem("favoriteAttractions");
+    this.favoriteAttractions = stored ? JSON.parse(stored) : [];
+
+    // 2. 讓表格勾選對應的景點
+    this.selectedAttractions = this.filteredAttractions.filter(attraction =>
+      this.favoriteAttractions.some(fav => fav.id === attraction.id)
+    );
+
+    this.cdr.detectChanges();
   }
 
   fetchAttractions() {
@@ -44,7 +56,7 @@ export class Attractions implements OnInit {
         this.attractions = res.data ?? [];
         this.filteredAttractions = [...this.attractions];
         this.totalRecords = this.attractions.length;
-        // this.updatePagedData();
+        this.updatePagedData();
         this.loading = false;
         console.log('attractions', this.attractions);
       },
@@ -73,27 +85,57 @@ export class Attractions implements OnInit {
   onPageChange(event: any) {
     this.first = event.first;
     this.rows = event.rows;
-    // this.updatePagedData();
+    this.updatePagedData();
   }
 
   onCategoryChange() {
-    console.log('selected id: ', this.selectedCategory);
     if (!this.selectedCategory || this.selectedCategory === 0) {
+      // 全部分類
       this.filteredAttractions = [...this.attractions];
-      return;
+    } else {
+      const selectedId = this.selectedCategory;
+      this.filteredAttractions = this.attractions.filter((attr) =>
+        attr.category?.some((c: any) => c.id === selectedId)
+      );
     }
 
-    // const selectedId = this.selectedCategory.id;
-    this.filteredAttractions = this.attractions.filter((attr) =>
-      attr.category?.some((c: any) => c.id === this.selectedCategory)
-    );
+    this.totalRecords = this.filteredAttractions.length;
+    console.log('total ', this.totalRecords);
+    this.first = 0;
+    this.updatePagedData();
 
     console.log('filteredAttractions', this.filteredAttractions);
   }
 
-  // addToFavorite(selectedFavorite: any) {
-  //   console.log("selected: ", selectedFavorite);
+  // isFavorite(attraction: any): boolean {
+  //   this.favoriteAttractions = JSON.parse(localStorage.getItem("favoriteAttractions") ?? '[]');
+  //   console.log("fav: ", this.favoriteAttractions);
+  //   return this.favoriteAttractions.some((fav) => fav.id === attraction.id);
   // }
+
+  addToFavorite(selectedFavorite: any) {
+    console.log('selected: ', selectedFavorite);
+    if (!selectedFavorite || selectedFavorite.length < 1) return;
+
+    // 避免重複加入
+    selectedFavorite.forEach((item: any) => {
+      const exists = this.favoriteAttractions.find((fav) => fav.id === item.id);
+      if (!exists) {
+        this.favoriteAttractions.push(item);
+      }
+    });
+
+    // 存到 localStorage
+    localStorage.setItem('favoriteAttractions', JSON.stringify(this.favoriteAttractions));
+
+    console.log('已加入最愛: ', this.favoriteAttractions);
+  }
+
+  updatePagedData() {
+    const start = this.first;
+    const end = this.first + this.rows;
+    this.pagedAttractions = this.filteredAttractions.slice(start, end);
+  }
 
   // updatePagedData() {
   //   console.log("first", this.first);

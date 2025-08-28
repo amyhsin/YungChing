@@ -23,8 +23,8 @@
       <th style="width: 3rem"></th>
       <th>名稱</th>
       <th>地區</th>
-      <th>地址</th>
-      <th>圖片</th>
+      <th class="hide-mobile">電話</th>
+      <th class="hide-mobile">圖片</th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-attraction>
@@ -34,8 +34,8 @@
       </td>
       <td>{{ attraction.name }}</td>
       <td>{{ attraction.distric }}</td>
-      <td>{{ attraction.address }}</td>
-      <td>
+      <td class="hide-mobile">{{ attraction.tel.replace('+886-', '0') }}</td>
+      <td class="hide-mobile">
         <ng-container *ngIf="attraction.images.length > 0">
           <img [src]="attraction.images[0].src" width="80" />
         </ng-container>
